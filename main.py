@@ -2,20 +2,20 @@ import os
 import pymysql
 from dotenv import load_dotenv
 
-load_dotenv() # Załadowanie pliku .env z konfiguracją programu
+load_dotenv() # Loading .env file with program configuration
 
-# Sprawdzenie czy wszystkie wymagane zmienne są ustawione w pliku .env
+# Checking if all required variables are set in the .env file
 required = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'DB_TABLE', 'DB_DATE_COLUMN', 'DB_INTERVAL']
 missing = [var for var in required if not os.getenv(var)]
 if missing:
-    print(f"Brakuje wymaganych zmiennych w pliku .env: {', '.join(missing)}")
+    print(f"Missing variables in the .env file: {', '.join(missing)}")
     raise
 
-table = os.getenv('DB_TABLE') # Pobranie nazwy tabli z której będą usuwane dane
-date = os.getenv('DB_DATE_COLUMN') # Pobranie nazwy kolumny w której przechowywana jest data
-interval = os.getenv('DB_INTERVAL') # Pobranie czasu po którym rekordy mają być usunięte
+table = os.getenv('DB_TABLE') # Load table name from .env file
+date = os.getenv('DB_DATE_COLUMN') # Load date column name from .env file
+interval = os.getenv('DB_INTERVAL') # Load deletion interval from .env file
 
-# Przygotowanie połączenia z bazą danych
+# Preparing connection to the database
 connection = pymysql.connect(
     host=os.getenv('DB_HOST'),
     port=int(os.getenv('DB_PORT')),
@@ -24,17 +24,17 @@ connection = pymysql.connect(
     database=os.getenv('DB_NAME')
 )
 
-# Próba połączenia z bazą danych
+# Attempting to connect to the database
 try:
     with connection.cursor() as cursor:
-        # Przygotowanie zapytania SQL do bazy danych
+        # Preparing the SQL query for the database
         sql = f"DELETE FROM {table} WHERE {date} < DATE_SUB(CURDATE(), INTERVAL {interval})"
-        deleted = cursor.execute(sql) # Wykonanie zapytania
-        connection.commit() # Zatwierdzenie zmian w bazie danych
-        print(f"Ilosc usunietych rekordow: {deleted} Starszych niz: {interval}") # Wyświetlenie ile rekordów zostało usuniętych
+        deleted = cursor.execute(sql) # Executing the query
+        connection.commit() # Committing changes to the database
+        print(f"Number of deleted records: {deleted} Older than: {interval}") # Echoing the number of deleted records
 except pymysql.Error as e:
-    connection.rollback() # Cofnięcie zmian jeśli wystąpił błąd
-    print(f"Wystapil blad: {e}")
+    connection.rollback() # Rolling back changes if an error occurred
+    print(f"An error occurred: {e}")
     raise
 finally:
-    connection.close() # Zamknięcie połączenia z bazą danych po zakończeniu operacji
+    connection.close() # Closing the connection to the database after completing the operation
