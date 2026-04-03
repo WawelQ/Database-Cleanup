@@ -1,4 +1,10 @@
-### Setup - run this program as a Docker image:
+## Setup - run this program as a Docker image:
+### First method (Recommended):
+You can simply pull already made image from Docker Hub
+
+`docker pull wawelq/db-cleanup:latest`
+### Second method:
+**Build docker image manually**
 1. **Clone repository from github:**
 `git clone https://github.com/WawelQ/Database-Cleanup`
 
