@@ -3,6 +3,7 @@
 **You can simply pull the pre-built image directly from Docker Hub:**
 
 `docker pull wawelq/db-cleanup:latest`
+
 **Run the image and pass .env file to it:**
 
 `docker run --env-file .env wawelq/db-cleanup:latest`
